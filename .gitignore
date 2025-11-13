@@ -22,3 +22,6 @@ Thumbs.db
 
 # Optional: Local properties for development environment
 local.properties
+
+# Gradle dependency/lockfile
+!gradle/wrapper/gradle-wrapper.jar
