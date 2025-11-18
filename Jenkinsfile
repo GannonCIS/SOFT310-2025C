@@ -12,6 +12,11 @@ pipeline {
                 echo 'Step 1: Starting Testing ...'
                 sh './gradlew test'
             }
+            post {
+                always {
+                    junit 'test-results.tests/*.xml'
+                }
+            }
         }
     }
 }
