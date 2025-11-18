@@ -4,7 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh './gradlew build'
+                sh './gradlew clean build'
             }
         }
         stage('Test') {
@@ -15,13 +15,14 @@ pipeline {
             post {
                 always {
                     junit 'build/test-results.tests/*.xml'
-                    publishHTML {
+                    publishHTML target: [
                         reportDir: 'build/reports/tests/test',
                         reportFiles: index.html,
                         reportName: 'Test Report',
                         allowMissing: true,
                         alwaysLinkToLastBuild: true,
                         keepAll: true
+                    ]
                 }
             }
         }
