@@ -1,20 +1,27 @@
 pipeline {
     agent none
     stages {
-        stage('Build Jenkins') {
+        stage('Build') {
             steps {
-                echo 'Building Jenkins'
+                echo 'Building...'
                 sh './gradlew build'
             }
         }
         stage('Test') {
             steps {
-                echo 'Step 1: Starting Testing ...'
+                echo 'Testing...'
                 sh './gradlew test'
             }
             post {
                 always {
                     junit 'test-results.tests/*.xml'
+                    publishHTML {
+                        reportDir: 'build/reports/tests/test',
+                        reportFiles: index.html,
+                        reportName: 'Test Report',
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true
                 }
             }
         }
