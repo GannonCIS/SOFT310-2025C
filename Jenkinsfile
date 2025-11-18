@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -14,10 +14,10 @@ pipeline {
             }
             post {
                 always {
-                    junit 'build/test-results.tests/*.xml'
+                    junit 'build/test-results/tests/*.xml'
                     publishHTML target: [
                         reportDir: 'build/reports/tests/test',
-                        reportFiles: index.html,
+                        reportFiles: 'index.html',
                         reportName: 'Test Report',
                         allowMissing: true,
                         alwaysLinkToLastBuild: true,
@@ -25,6 +25,11 @@ pipeline {
                     ]
                 }
             }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }
