@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Login {
+    public boolean isTestMode = false;
     void loginFun() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter your Account Number: ");
@@ -14,7 +15,7 @@ public class Login {
         loginAuth(accNo, pass);
     }
 
-     void loginAuth(int accNo, String pass) throws IOException {
+     public void loginAuth(int accNo, String pass) throws IOException {
         File file = new File("db/credentials.txt");
         Scanner scanner = new Scanner(file);
         boolean loginBoo = false;
@@ -29,9 +30,10 @@ public class Login {
                 incPass = true;
             }
         }
+        scanner.close();
         if (loginBoo) {
             System.out.println("Login Successful!!\n");
-            Main.menu(accNo);
+//            Main.menu(accNo);
         } else if (incPass) {
             System.out.println("\nIncorrect Password!");
             System.out.println("Please enter again.\n");
