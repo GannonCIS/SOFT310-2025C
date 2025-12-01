@@ -1,37 +1,36 @@
 package org.example;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import java.io.File;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import static org.junit.Assert.*;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeletionBranchCovTest {
 
-    private final String TEST_FILE = "test_deletion_db.txt";
+    @TempDir
+    Path tempDir;
 
-    @Before
+    private Path testFile;
+
+    @BeforeEach
     public void setUp() {
-        new File(TEST_FILE).delete();
-    }
-
-    @After
-    public void tearDown() {
-        new File(TEST_FILE).delete();
+        testFile = tempDir.resolve("test_deletion_db.txt");
     }
 
     private void createTestFile(String content) throws IOException {
-        FileWriter writer = new FileWriter(TEST_FILE);
-        writer.write(content);
-        writer.close();
+        try (FileWriter writer = new FileWriter(testFile.toFile())) {
+            writer.write(content);
+        }
     }
 
     private String readFile() throws IOException {
-        return new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        return Files.exists(testFile) ? Files.readString(testFile) : "";
     }
 
     @Test
@@ -39,7 +38,7 @@ public class DeletionBranchCovTest {
         createTestFile("101 user1\n102 user2\n103 user3");
 
         Deletion deletion = new Deletion();
-        deletion.delLine(102, TEST_FILE);
+        deletion.delLine(102, testFile.toString());
 
         String result = readFile();
         String expected = "101 user1\n103 user3";
@@ -51,7 +50,7 @@ public class DeletionBranchCovTest {
         createTestFile("101 user1");
 
         Deletion deletion = new Deletion();
-        deletion.delLine(101, TEST_FILE);
+        deletion.delLine(101, testFile.toString());
 
         String result = readFile();
         assertEquals("", result);
@@ -63,7 +62,7 @@ public class DeletionBranchCovTest {
 
         Deletion deletion = new Deletion();
 
-        deletion.delLine(101, TEST_FILE);
+        deletion.delLine(101, testFile.toString());
 
         String result = readFile();
         assertEquals("", result);
