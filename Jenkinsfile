@@ -19,10 +19,6 @@ pipeline {
             post {
                 always {
                     junit 'build/test-results/test/*.xml'
-                    jacoco execPattern: 'build/jacoco/test.exec',
-                           classPattern: 'build/classes/java/main',
-                           sourcePattern: 'src/main/java',
-                           htmlReportDir: 'build/reports/jacoco/test/html'
                     publishHTML target: [
                         reportDir: 'build/reports/tests/test',
                         reportFiles: 'index.html',
@@ -31,13 +27,16 @@ pipeline {
                         alwaysLinkToLastBuild: true,
                         keepAll: true
                     ]
+                    publishHTML target: [
+                        reportDir: 'build/reports/jacoco/test/html',
+                        reportFiles: 'index.html',
+                        reportName: 'Coverage Report',
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true
+                    ]
                 }
             }
-        }
-    }
-    post {
-        cleanup {
-            cleanWs()
         }
     }
 }
