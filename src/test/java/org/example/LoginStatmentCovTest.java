@@ -3,14 +3,6 @@ package org.example;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import java.io.*;
-import static org.junit.Assert.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,9 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
 public class LoginStatmentCovTest {
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -35,7 +26,7 @@ public class LoginStatmentCovTest {
     private boolean credentialFileExisted;
     private final Path credFile = Paths.get("db", "credentials.txt");
 
-    @BeforeEach
+    @Before
     public void setUp() throws IOException {
         System.setOut(new PrintStream(outContent));
 
@@ -55,7 +46,7 @@ public class LoginStatmentCovTest {
         }
     }
 
-    @AfterEach
+    @After
     public void tearDown() throws IOException {
         System.setOut(originalOut);
         System.setIn(originalIn);

@@ -1,34 +1,27 @@
 package org.example;
 
-
-import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import java.io.File;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(JUnit4.class)
 public class DeletionBranchCovTest {
 
-    @TempDir
-    Path tempDir;
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
 
     private Path testFile;
 
-    @BeforeEach
-    public void setUp() {
-        testFile = tempDir.resolve("test_deletion_db.txt");
+    @Before
+    public void setUp() throws IOException {
+        testFile = tempDir.newFile("test_deletion_db.txt").toPath();
     }
 
     private void createTestFile(String content) throws IOException {
