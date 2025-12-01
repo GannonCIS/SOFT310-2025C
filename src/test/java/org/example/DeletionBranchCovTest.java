@@ -3,6 +3,9 @@ package org.example;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import static org.junit.Assert.*;
 
+@RunWith(JUnit4.class)
 public class DeletionBranchCovTest {
 
     private final String TEST_FILE = "test_deletion_db.txt";
