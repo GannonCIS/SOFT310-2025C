@@ -8,6 +8,22 @@ import org.junit.runners.JUnit4;
 
 import java.io.*;
 import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(JUnit4.class)
 public class LoginStatmentCovTest {
@@ -15,34 +31,40 @@ public class LoginStatmentCovTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final InputStream originalIn = System.in;
+    private String originalCredentialContent;
+    private boolean credentialFileExisted;
+    private final Path credFile = Paths.get("db", "credentials.txt");
 
-    private final String DB_DIR = "db";
-    private final String CRED_FILE = "db" + File.separator + "credentials.txt";
-
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         System.setOut(new PrintStream(outContent));
 
-        File dir = new File(DB_DIR);
-        if (!dir.exists()) dir.mkdirs();
-
-        File file = new File(CRED_FILE);
-        if (file.exists() && !file.delete()) {
-            System.err.println("Warning: Could not delete credentials.txt");
+        File dir = credFile.getParent().toFile();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Unable to create db directory");
         }
 
-        FileWriter writer = new FileWriter(file);
-        writer.write("12345 password" + System.lineSeparator());
-        writer.write("99999 otherpass" + System.lineSeparator());
-        writer.close();
+        credentialFileExisted = Files.exists(credFile);
+        if (credentialFileExisted) {
+            originalCredentialContent = Files.readString(credFile);
+        }
+
+        try (FileWriter writer = new FileWriter(credFile.toFile())) {
+            writer.write("12345 password" + System.lineSeparator());
+            writer.write("99999 otherpass" + System.lineSeparator());
+        }
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    public void tearDown() throws IOException {
         System.setOut(originalOut);
         System.setIn(originalIn);
-        new File(CRED_FILE).delete();
-        new File(DB_DIR).delete();
+
+        if (credentialFileExisted) {
+            Files.writeString(credFile, originalCredentialContent);
+        } else {
+            Files.deleteIfExists(credFile);
+        }
     }
 
     @Test
@@ -54,25 +76,28 @@ public class LoginStatmentCovTest {
     }
 
     @Test
-    public void testIncorrectPassword() throws IOException {
+    public void testIncorrectPasswordTriggersRetry() throws IOException {
         Login login = new Login();
 
         String simulatedInput = "12345\npassword\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
         login.loginAuth(12345, "wrongpass");
-        assertTrue(outContent.toString().contains("Incorrect Password!"));
-        assertTrue(outContent.toString().contains("Login Successful!!"));
+        String output = outContent.toString();
+        assertTrue(output.contains("Incorrect Password!"));
+        assertTrue(output.contains("Login Successful!!"));
     }
 
     @Test
-    public void testAccountDoesNotExist() throws IOException {
+    public void testAccountDoesNotExistTriggersCreationPrompt() throws IOException {
         Login login = new Login();
 
         String simulatedInput = "12345\npassword\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
-        login.loginAuth(88888, "anypass");
 
-        assertTrue(outContent.toString().contains("Account doesn't exists!"));
-        assertTrue(outContent.toString().contains("Login Successful!!"));
+        login.loginAuth(88888, "anypass");
+        String output = outContent.toString();
+        assertTrue(output.contains("Account doesn't exists!"));
+        assertTrue(output.contains("Login Successful!!"));
     }
 }
