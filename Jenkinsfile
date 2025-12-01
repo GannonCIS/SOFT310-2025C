@@ -1,8 +1,8 @@
 pipeline {
     agent any
     tools {
-        jdk 'temurin-21'
-        gradle 'gradle-8.10'
+        jdk '21'
+        gradle '8.10'
     }
     stages {
         stage('Build') {
