@@ -27,6 +27,7 @@ public class CreationFileOpsTest {
 
     @BeforeEach
     public void setUp() throws IOException {
+        // Prepare clean db directory and remember original state so we can restore it
         Files.createDirectories(dbDir);
         credExisted = Files.exists(credFile);
         balExisted = Files.exists(balFile);
@@ -44,6 +45,7 @@ public class CreationFileOpsTest {
         if (userExisted) {
             originalUserContent = Files.readString(userFile);
         }
+        // Force creation paths to run from empty balance/user files
         Files.deleteIfExists(balFile);
         Files.deleteIfExists(userFile);
     }
@@ -71,6 +73,7 @@ public class CreationFileOpsTest {
 
     @Test
     public void testAccNoCreationWhenEmpty() throws IOException {
+        // When credentials file is empty, the first generated account number should be 1
         Creation creation = new Creation();
 
         int accNo = creation.accNoCreation();
@@ -79,6 +82,7 @@ public class CreationFileOpsTest {
 
     @Test
     public void testAccNoCreationWithExistingRecords() throws IOException {
+        // With existing max account 5, the next generated number should be 6
         Files.writeString(credFile, "1 pass\n5 pass");
         Creation creation = new Creation();
 
@@ -88,6 +92,7 @@ public class CreationFileOpsTest {
 
     @Test
     public void testCredentialBalanceAndUserWrites() throws IOException {
+        // Verify credWrite/balWrite/userWrite append the expected lines to each file
         Creation creation = new Creation();
         int accNo = 12;
         String[] accLineInfo = new String[] {
