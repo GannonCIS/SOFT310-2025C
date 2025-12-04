@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreationFileOpsTest {
+public class CreationFunctionalTest {
 
     private final Path dbDir = Paths.get("db");
     private final Path credFile = dbDir.resolve("credentials.txt");
