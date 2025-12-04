@@ -45,5 +45,28 @@ public class Login {
         }
     }
 
+    // Helper method for JUnit: checks credentials and returns true/false
+    public boolean loginAuthCheck(int accNo, String pass) throws IOException {
+        File file = new File("db/credentials.txt");
+        Scanner scanner = new Scanner(file);
+
+        boolean loginBoo = false;
+        boolean incPass = false;
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] subLine = line.split(" ");
+
+            if (accNo == Integer.parseInt(subLine[0]) && pass.equals(subLine[1])) {
+                loginBoo = true;
+                break;
+            } else if (accNo == Integer.parseInt(subLine[0])) {
+                incPass = true;
+            }
+        }
+
+        // For testing we only need: true = login ok, false = anything else
+        return loginBoo;
+    }
 
 }

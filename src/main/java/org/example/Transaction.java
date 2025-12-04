@@ -118,5 +118,20 @@ public class Transaction {
         writer.close();
     }
 
+    // Helper method for JUnit: tells us if a transfer WOULD be allowed
+    public boolean canTransfer(int sAccNo, int rAccNo, int tAmount) throws IOException {
 
+        // Receiver must exist
+        if (!rAccCheck(rAccNo)) {
+            return false;
+        }
+
+        // Sender must have enough balance
+        if (!sAccBalCheck(sAccNo, tAmount)) {
+            return false;
+        }
+
+        // If both checks pass, the current code would allow the transfer
+        return true;
+    }
 }
